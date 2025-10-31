@@ -10,7 +10,7 @@ class TronLightCycles {
         // Game settings
         this.gridSize = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9);
         this.cellSize = 8;
-        this.speed = 120; // milliseconds between moves
+        this.speed = 60; // milliseconds between moves (doubled speed)
         
         // Light cycles
         this.cycles = [
@@ -331,7 +331,7 @@ class TronLightCycles {
         this.cycles.forEach((cycle, index) => {
             if (!cycle.alive) return;
             
-            // Add current position to trail
+            // Add current position to trail BEFORE moving
             cycle.trail.push({ x: cycle.x, y: cycle.y });
             
             // AI behavior for non-player cycles
@@ -339,49 +339,103 @@ class TronLightCycles {
                 this.updateAI(cycle);
             }
             
-            // Move cycle
-            cycle.x += cycle.dx * this.cellSize;
-            cycle.y += cycle.dy * this.cellSize;
+            // Calculate new position
+            const newX = cycle.x + (cycle.dx * this.cellSize);
+            const newY = cycle.y + (cycle.dy * this.cellSize);
             
-            // Check boundaries
-            if (cycle.x < 0 || cycle.x >= this.gridSize || 
-                cycle.y < 0 || cycle.y >= this.gridSize) {
+            // Check boundaries BEFORE moving
+            if (newX < 0 || newX >= this.gridSize || 
+                newY < 0 || newY >= this.gridSize) {
                 cycle.alive = false;
                 console.log(`%c[TRON] ${cycle.name} hit the arena boundary!`, 'color: #ff6600; font-family: monospace;');
+                return;
             }
             
-            // Check trail collisions
-            const allTrails = this.cycles.flatMap(c => c.trail);
-            if (allTrails.some(pos => pos.x === cycle.x && pos.y === cycle.y)) {
+            // Check trail collisions BEFORE moving
+            // Get all trail positions from all cycles (including current cycle's trail)
+            const allTrails = [];
+            this.cycles.forEach(c => {
+                allTrails.push(...c.trail);
+            });
+            
+            // Check if new position collides with any trail
+            const collision = allTrails.some(pos => pos.x === newX && pos.y === newY);
+            if (collision) {
                 cycle.alive = false;
                 console.log(`%c[TRON] ${cycle.name} collided with an energy trail!`, 'color: #ff6600; font-family: monospace;');
+                return;
             }
+            
+            // Move cycle to new position only if no collision
+            cycle.x = newX;
+            cycle.y = newY;
         });
     }
     
     updateAI(cycle) {
         cycle.aiTimer++;
         
-        // Simple AI: change direction periodically or when near boundaries/trails
-        const margin = this.cellSize * 5;
-        const nearBoundary = cycle.x < margin || cycle.x > this.gridSize - margin ||
-                            cycle.y < margin || cycle.y > this.gridSize - margin;
+        // Check for immediate dangers
+        const lookAhead = this.cellSize * 3;
+        const nextX = cycle.x + (cycle.dx * lookAhead);
+        const nextY = cycle.y + (cycle.dy * lookAhead);
         
-        if (cycle.aiTimer > 30 || nearBoundary || Math.random() < 0.02) {
+        // Get all trail positions
+        const allTrails = [];
+        this.cycles.forEach(c => {
+            allTrails.push(...c.trail);
+        });
+        
+        // Check if current direction leads to danger
+        const margin = this.cellSize * 8;
+        const nearBoundary = nextX < margin || nextX > this.gridSize - margin ||
+                            nextY < margin || nextY > this.gridSize - margin;
+        
+        const nearTrail = allTrails.some(pos => 
+            Math.abs(pos.x - nextX) < this.cellSize * 2 && 
+            Math.abs(pos.y - nextY) < this.cellSize * 2
+        );
+        
+        // Change direction if in danger or periodically
+        if (cycle.aiTimer > 25 || nearBoundary || nearTrail || Math.random() < 0.03) {
             const directions = [
                 { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
                 { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
             ];
             
-            // Filter out reverse direction
-            const validDirections = directions.filter(dir => 
+            // Filter out reverse direction and dangerous directions
+            const safeDirections = directions.filter(dir => {
+                // Can't reverse
+                if (dir.dx === -cycle.dx && dir.dy === -cycle.dy) return false;
+                
+                // Check if this direction is safe
+                const testX = cycle.x + (dir.dx * lookAhead);
+                const testY = cycle.y + (dir.dy * lookAhead);
+                
+                // Check boundaries
+                if (testX < margin || testX > this.gridSize - margin ||
+                    testY < margin || testY > this.gridSize - margin) return false;
+                
+                // Check trails
+                const wouldHitTrail = allTrails.some(pos => 
+                    Math.abs(pos.x - testX) < this.cellSize && 
+                    Math.abs(pos.y - testY) < this.cellSize
+                );
+                
+                return !wouldHitTrail;
+            });
+            
+            // Choose a safe direction, or random if no safe options
+            const directionsToUse = safeDirections.length > 0 ? safeDirections : directions.filter(dir => 
                 !(dir.dx === -cycle.dx && dir.dy === -cycle.dy)
             );
             
-            const newDir = validDirections[Math.floor(Math.random() * validDirections.length)];
-            cycle.dx = newDir.dx;
-            cycle.dy = newDir.dy;
-            cycle.aiTimer = 0;
+            if (directionsToUse.length > 0) {
+                const newDir = directionsToUse[Math.floor(Math.random() * directionsToUse.length)];
+                cycle.dx = newDir.dx;
+                cycle.dy = newDir.dy;
+                cycle.aiTimer = 0;
+            }
         }
     }
     

@@ -363,17 +363,131 @@ body {
     left: 100%;
 }
 
-/* Footer */
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 2rem 0;
+/* Corner Decorations */
+.corner-decoration {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    border: 2px solid var(--primary-cyan);
+    z-index: 5;
 }
 
-footer p {
-    margin: 0;
-    color: #ccc;
+.corner-decoration::before,
+.corner-decoration::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-cyan);
+}
+
+.top-left {
+    top: 2rem;
+    left: 2rem;
+    border-right: none;
+    border-bottom: none;
+}
+
+.top-left::before {
+    top: -2px;
+    left: -2px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.top-left::after {
+    bottom: -2px;
+    right: -2px;
+    border-left: none;
+    border-top: none;
+}
+
+.top-right {
+    top: 2rem;
+    right: 2rem;
+    border-left: none;
+    border-bottom: none;
+}
+
+.bottom-left {
+    bottom: 2rem;
+    left: 2rem;
+    border-right: none;
+    border-top: none;
+}
+
+.bottom-right {
+    bottom: 2rem;
+    right: 2rem;
+    border-left: none;
+    border-top: none;
+}
+
+/* Data Streams */
+.data-stream {
+    position: fixed;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--primary-cyan), transparent);
+    animation: dataFlow 3s linear infinite;
+    z-index: 1;
+}
+
+.data-stream.left {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.data-stream.right {
+    right: 10%;
+    animation-delay: 1.5s;
+}
+
+@keyframes dataFlow {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Terminal Footer */
+.terminal-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    border-top: 1px solid var(--primary-cyan);
+    padding: 1rem 2rem;
+    font-family: 'Courier New', monospace;
+    z-index: 100;
+}
+
+.terminal-line {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.prompt {
+    color: var(--neon-green);
+    font-weight: bold;
+}
+
+.command {
+    color: var(--text-primary);
+    margin-left: 0.5rem;
+}
+
+.copyright {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
 }
 
 /* Responsive Design */

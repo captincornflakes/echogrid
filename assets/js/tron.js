@@ -351,18 +351,31 @@ class TronLightCycles {
                 return;
             }
             
-            // Check trail collisions BEFORE moving
-            // Get all trail positions from all cycles (including current cycle's trail)
+            // Check collisions BEFORE moving
+            
+            // 1. Check collision with ALL trails from ALL cycles
             const allTrails = [];
             this.cycles.forEach(c => {
+                // Include all trail positions from all cycles
                 allTrails.push(...c.trail);
             });
             
-            // Check if new position collides with any trail
-            const collision = allTrails.some(pos => pos.x === newX && pos.y === newY);
-            if (collision) {
+            // 2. Check collision with OTHER cycles' current positions (head-to-head)
+            const otherCycles = this.cycles.filter((c, i) => i !== index && c.alive);
+            const headToHeadCollision = otherCycles.some(otherCycle => 
+                otherCycle.x === newX && otherCycle.y === newY
+            );
+            
+            // 3. Check collision with trails
+            const trailCollision = allTrails.some(pos => pos.x === newX && pos.y === newY);
+            
+            if (trailCollision || headToHeadCollision) {
                 cycle.alive = false;
-                console.log(`%c[TRON] ${cycle.name} collided with an energy trail!`, 'color: #ff6600; font-family: monospace;');
+                if (headToHeadCollision) {
+                    console.log(`%c[TRON] ${cycle.name} collided head-to-head with opponent!`, 'color: #ff6600; font-family: monospace;');
+                } else {
+                    console.log(`%c[TRON] ${cycle.name} collided with an energy trail!`, 'color: #ff6600; font-family: monospace;');
+                }
                 return;
             }
             
@@ -380,10 +393,14 @@ class TronLightCycles {
         const nextX = cycle.x + (cycle.dx * lookAhead);
         const nextY = cycle.y + (cycle.dy * lookAhead);
         
-        // Get all trail positions
+        // Get all trail positions and opponent positions
         const allTrails = [];
+        const opponentPositions = [];
         this.cycles.forEach(c => {
             allTrails.push(...c.trail);
+            if (c !== cycle && c.alive) {
+                opponentPositions.push({ x: c.x, y: c.y });
+            }
         });
         
         // Check if current direction leads to danger
@@ -396,8 +413,13 @@ class TronLightCycles {
             Math.abs(pos.y - nextY) < this.cellSize * 2
         );
         
+        const nearOpponent = opponentPositions.some(pos => 
+            Math.abs(pos.x - nextX) < this.cellSize * 3 && 
+            Math.abs(pos.y - nextY) < this.cellSize * 3
+        );
+        
         // Change direction if in danger or periodically
-        if (cycle.aiTimer > 25 || nearBoundary || nearTrail || Math.random() < 0.03) {
+        if (cycle.aiTimer > 25 || nearBoundary || nearTrail || nearOpponent || Math.random() < 0.03) {
             const directions = [
                 { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
                 { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
@@ -422,7 +444,13 @@ class TronLightCycles {
                     Math.abs(pos.y - testY) < this.cellSize
                 );
                 
-                return !wouldHitTrail;
+                // Check opponent positions
+                const wouldHitOpponent = opponentPositions.some(pos => 
+                    Math.abs(pos.x - testX) < this.cellSize * 2 && 
+                    Math.abs(pos.y - testY) < this.cellSize * 2
+                );
+                
+                return !wouldHitTrail && !wouldHitOpponent;
             });
             
             // Choose a safe direction, or random if no safe options

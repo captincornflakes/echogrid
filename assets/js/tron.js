@@ -1,0 +1,508 @@
+// Tron Light Cycles Game
+class TronLightCycles {
+    constructor() {
+        this.canvas = null;
+        this.ctx = null;
+        this.gameContainer = null;
+        this.isRunning = false;
+        this.animationId = null;
+        
+        // Game settings
+        this.gridSize = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9);
+        this.cellSize = 8;
+        this.speed = 120; // milliseconds between moves
+        
+        // Light cycles
+        this.cycles = [
+            {
+                x: Math.floor(this.gridSize * 0.25), 
+                y: Math.floor(this.gridSize * 0.5), 
+                dx: 1, dy: 0,
+                color: '#00ffff', 
+                name: 'PLAYER 1',
+                trail: [], 
+                alive: true,
+                isPlayer: true
+            },
+            {
+                x: Math.floor(this.gridSize * 0.75), 
+                y: Math.floor(this.gridSize * 0.5), 
+                dx: -1, dy: 0,
+                color: '#ff6600', 
+                name: 'AI OPPONENT',
+                trail: [], 
+                alive: true,
+                isPlayer: false,
+                aiTimer: 0,
+                aiDirection: 0
+            }
+        ];
+        
+        this.lastUpdate = 0;
+        this.keys = {
+            w: false, a: false, s: false, d: false
+        };
+        
+        this.gameState = 'init'; // init, playing, gameOver
+        this.winner = null;
+    }
+    
+    initialize() {
+        this.createGameContainer();
+        this.setupCanvas();
+        this.setupControls();
+        this.showInitSequence();
+    }
+    
+    createGameContainer() {
+        // Remove existing container if any
+        const existing = document.getElementById('tronGameContainer');
+        if (existing) existing.remove();
+        
+        this.gameContainer = document.createElement('div');
+        this.gameContainer.id = 'tronGameContainer';
+        this.gameContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #001122 0%, #000000 100%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            color: #00ffff;
+            overflow: hidden;
+        `;
+        
+        document.body.appendChild(this.gameContainer);
+        
+        // Prevent scrolling
+        document.body.style.overflow = 'hidden';
+    }
+    
+    setupCanvas() {
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = this.gridSize;
+        this.canvas.height = this.gridSize;
+        this.canvas.style.cssText = `
+            border: 3px solid #00ffff;
+            box-shadow: 
+                0 0 50px #00ffff, 
+                inset 0 0 30px rgba(0, 255, 255, 0.1),
+                0 0 100px rgba(0, 255, 255, 0.3);
+            background: radial-gradient(circle at center, #000011 0%, #000000 100%);
+            image-rendering: pixelated;
+        `;
+        
+        this.ctx = this.canvas.getContext('2d');
+        
+        // Add title
+        const title = document.createElement('h1');
+        title.textContent = 'TRON LIGHT CYCLE ARENA';
+        title.style.cssText = `
+            position: absolute;
+            top: 20px;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            text-shadow: 0 0 20px #00ffff;
+            animation: tronGlow 2s ease-in-out infinite alternate;
+            margin: 0;
+            z-index: 10;
+        `;
+        
+        // Add controls info
+        const controls = document.createElement('div');
+        controls.id = 'gameStatus';
+        controls.style.cssText = `
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            color: #00ff41;
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            z-index: 10;
+        `;
+        controls.innerHTML = `
+            <div style="margin-bottom: 10px;">
+                <p>INITIALIZING LIGHT CYCLE GRID...</p>
+            </div>
+            <div style="font-size: 0.8em; color: #666;">
+                <p>WASD to control • ESC to exit</p>
+            </div>
+        `;
+        
+        // Add score display
+        const scoreDisplay = document.createElement('div');
+        scoreDisplay.id = 'scoreDisplay';
+        scoreDisplay.style.cssText = `
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            z-index: 10;
+        `;
+        
+        this.gameContainer.appendChild(title);
+        this.gameContainer.appendChild(scoreDisplay);
+        this.gameContainer.appendChild(this.canvas);
+        this.gameContainer.appendChild(controls);
+        
+        // Add styles
+        if (!document.getElementById('tronStyles')) {
+            const style = document.createElement('style');
+            style.id = 'tronStyles';
+            style.textContent = `
+                @keyframes tronGlow {
+                    from { 
+                        text-shadow: 0 0 20px #00ffff; 
+                        transform: scale(1);
+                    }
+                    to { 
+                        text-shadow: 0 0 40px #00ffff, 0 0 60px #00ffff; 
+                        transform: scale(1.02);
+                    }
+                }
+                @keyframes tronPulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.7; }
+                }
+                @keyframes gameOverGlow {
+                    0%, 100% { 
+                        text-shadow: 0 0 20px currentColor;
+                        transform: scale(1);
+                    }
+                    50% { 
+                        text-shadow: 0 0 40px currentColor, 0 0 60px currentColor;
+                        transform: scale(1.1);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+    
+    setupControls() {
+        this.keyHandler = (e) => {
+            const key = e.key.toLowerCase();
+            
+            if (key === 'escape') {
+                this.destroy();
+                return;
+            }
+            
+            if (!this.isRunning || this.gameState !== 'playing') return;
+            
+            const player = this.cycles[0]; // Player is always first cycle
+            if (!player.alive) return;
+            
+            // Handle WASD movement
+            switch(key) {
+                case 'w':
+                    if (player.dy !== 1) { // Can't go back into yourself
+                        player.dx = 0;
+                        player.dy = -1;
+                    }
+                    break;
+                case 's':
+                    if (player.dy !== -1) {
+                        player.dx = 0;
+                        player.dy = 1;
+                    }
+                    break;
+                case 'a':
+                    if (player.dx !== 1) {
+                        player.dx = -1;
+                        player.dy = 0;
+                    }
+                    break;
+                case 'd':
+                    if (player.dx !== -1) {
+                        player.dx = 1;
+                        player.dy = 0;
+                    }
+                    break;
+            }
+        };
+        
+        document.addEventListener('keydown', this.keyHandler);
+    }
+    
+    showInitSequence() {
+        const messages = [
+            'LOADING GRID PARAMETERS...',
+            'INITIALIZING LIGHT CYCLES...',
+            'CALIBRATING ENERGY WALLS...',
+            'ESTABLISHING ARENA BOUNDS...',
+            'ACTIVATING PLAYER CONTROLS...',
+            'GRID ONLINE - RACE COMMENCING!'
+        ];
+        
+        let messageIndex = 0;
+        const statusDiv = document.getElementById('gameStatus');
+        
+        const showNextMessage = () => {
+            if (messageIndex < messages.length) {
+                statusDiv.innerHTML = `
+                    <div style="margin-bottom: 10px;">
+                        <p style="animation: tronPulse 1s ease-in-out;">${messages[messageIndex]}</p>
+                    </div>
+                    <div style="font-size: 0.8em; color: #666;">
+                        <p>WASD to control • ESC to exit</p>
+                    </div>
+                `;
+                messageIndex++;
+                
+                if (messageIndex < messages.length) {
+                    setTimeout(showNextMessage, 1200);
+                } else {
+                    setTimeout(() => this.startGame(), 1500);
+                }
+            }
+        };
+        
+        setTimeout(showNextMessage, 800);
+    }
+    
+    startGame() {
+        console.log('%c[TRON] Light Cycle Arena initialized! Use WASD to control your cycle.', 'color: #00ffff; font-family: monospace;');
+        
+        this.gameState = 'playing';
+        this.isRunning = true;
+        
+        // Update status display
+        const statusDiv = document.getElementById('gameStatus');
+        statusDiv.innerHTML = `
+            <div style="color: #00ff41;">
+                <p>ARENA ACTIVE - SURVIVE THE GRID!</p>
+            </div>
+            <div style="font-size: 0.8em; color: #666;">
+                <p>WASD to control • ESC to exit</p>
+            </div>
+        `;
+        
+        this.drawGrid();
+        this.gameLoop();
+    }
+    
+    drawGrid() {
+        this.ctx.fillStyle = 'rgba(0, 0, 17, 0.1)';
+        this.ctx.fillRect(0, 0, this.gridSize, this.gridSize);
+        
+        // Draw grid lines
+        this.ctx.strokeStyle = 'rgba(0, 255, 255, 0.05)';
+        this.ctx.lineWidth = 1;
+        
+        const gridSpacing = this.cellSize * 8;
+        for (let i = 0; i <= this.gridSize; i += gridSpacing) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(i, 0);
+            this.ctx.lineTo(i, this.gridSize);
+            this.ctx.stroke();
+            
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, i);
+            this.ctx.lineTo(this.gridSize, i);
+            this.ctx.stroke();
+        }
+    }
+    
+    gameLoop() {
+        if (!this.isRunning) return;
+        
+        const now = Date.now();
+        if (now - this.lastUpdate > this.speed) {
+            this.update();
+            this.draw();
+            this.checkGameOver();
+            this.lastUpdate = now;
+        }
+        
+        this.animationId = requestAnimationFrame(() => this.gameLoop());
+    }
+    
+    update() {
+        if (this.gameState !== 'playing') return;
+        
+        this.cycles.forEach((cycle, index) => {
+            if (!cycle.alive) return;
+            
+            // Add current position to trail
+            cycle.trail.push({ x: cycle.x, y: cycle.y });
+            
+            // AI behavior for non-player cycles
+            if (!cycle.isPlayer) {
+                this.updateAI(cycle);
+            }
+            
+            // Move cycle
+            cycle.x += cycle.dx * this.cellSize;
+            cycle.y += cycle.dy * this.cellSize;
+            
+            // Check boundaries
+            if (cycle.x < 0 || cycle.x >= this.gridSize || 
+                cycle.y < 0 || cycle.y >= this.gridSize) {
+                cycle.alive = false;
+                console.log(`%c[TRON] ${cycle.name} hit the arena boundary!`, 'color: #ff6600; font-family: monospace;');
+            }
+            
+            // Check trail collisions
+            const allTrails = this.cycles.flatMap(c => c.trail);
+            if (allTrails.some(pos => pos.x === cycle.x && pos.y === cycle.y)) {
+                cycle.alive = false;
+                console.log(`%c[TRON] ${cycle.name} collided with an energy trail!`, 'color: #ff6600; font-family: monospace;');
+            }
+        });
+    }
+    
+    updateAI(cycle) {
+        cycle.aiTimer++;
+        
+        // Simple AI: change direction periodically or when near boundaries/trails
+        const margin = this.cellSize * 5;
+        const nearBoundary = cycle.x < margin || cycle.x > this.gridSize - margin ||
+                            cycle.y < margin || cycle.y > this.gridSize - margin;
+        
+        if (cycle.aiTimer > 30 || nearBoundary || Math.random() < 0.02) {
+            const directions = [
+                { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
+                { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
+            ];
+            
+            // Filter out reverse direction
+            const validDirections = directions.filter(dir => 
+                !(dir.dx === -cycle.dx && dir.dy === -cycle.dy)
+            );
+            
+            const newDir = validDirections[Math.floor(Math.random() * validDirections.length)];
+            cycle.dx = newDir.dx;
+            cycle.dy = newDir.dy;
+            cycle.aiTimer = 0;
+        }
+    }
+    
+    draw() {
+        this.drawGrid();
+        
+        this.cycles.forEach(cycle => {
+            // Draw trail
+            this.ctx.fillStyle = cycle.color;
+            this.ctx.shadowColor = cycle.color;
+            this.ctx.shadowBlur = 8;
+            
+            cycle.trail.forEach((pos, index) => {
+                const alpha = Math.max(0.3, 1 - (cycle.trail.length - index) * 0.01);
+                this.ctx.globalAlpha = alpha;
+                this.ctx.fillRect(pos.x, pos.y, this.cellSize, this.cellSize);
+            });
+            
+            this.ctx.globalAlpha = 1;
+            
+            // Draw cycle head (if alive)
+            if (cycle.alive) {
+                this.ctx.fillStyle = cycle.color;
+                this.ctx.shadowBlur = 15;
+                
+                // Pulsing effect for player
+                const pulseSize = cycle.isPlayer ? this.cellSize + Math.sin(Date.now() * 0.01) * 2 : this.cellSize;
+                const offset = cycle.isPlayer ? (this.cellSize - pulseSize) / 2 : 0;
+                
+                this.ctx.fillRect(cycle.x + offset, cycle.y + offset, pulseSize, pulseSize);
+            }
+            
+            this.ctx.shadowBlur = 0;
+        });
+        
+        // Update score display
+        this.updateScoreDisplay();
+    }
+    
+    updateScoreDisplay() {
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        if (scoreDisplay) {
+            const player1 = this.cycles[0];
+            const player2 = this.cycles[1];
+            
+            scoreDisplay.innerHTML = `
+                <div style="color: ${player1.color}; text-shadow: 0 0 10px ${player1.color};">
+                    ${player1.name}: ${player1.alive ? 'ONLINE' : 'DEREZZED'}
+                </div>
+                <div style="color: #00ff41; font-size: 0.8em;">
+                    ARENA TIME: ${Math.floor((Date.now() / 1000) % 999)}
+                </div>
+                <div style="color: ${player2.color}; text-shadow: 0 0 10px ${player2.color};">
+                    ${player2.name}: ${player2.alive ? 'ONLINE' : 'DEREZZED'}
+                </div>
+            `;
+        }
+    }
+    
+    checkGameOver() {
+        const aliveCycles = this.cycles.filter(c => c.alive);
+        
+        if (aliveCycles.length <= 1 && this.gameState === 'playing') {
+            this.gameState = 'gameOver';
+            
+            if (aliveCycles.length === 1) {
+                this.winner = aliveCycles[0];
+                console.log(`%c[TRON] ${this.winner.name} wins the Light Cycle Arena!`, 'color: #00ff41; font-family: monospace;');
+            } else {
+                console.log('%c[TRON] Draw! All cycles derezzed simultaneously!', 'color: #ffff00; font-family: monospace;');
+            }
+            
+            this.showGameOver();
+        }
+    }
+    
+    showGameOver() {
+        const statusDiv = document.getElementById('gameStatus');
+        const winnerText = this.winner ? 
+            `${this.winner.name} WINS!` : 
+            'SIMULTANEOUS DEREZ - DRAW!';
+        
+        const winnerColor = this.winner ? this.winner.color : '#ffff00';
+        
+        statusDiv.innerHTML = `
+            <div style="color: ${winnerColor}; animation: gameOverGlow 1s ease-in-out infinite;">
+                <p>${winnerText}</p>
+                <p style="font-size: 0.8em; margin-top: 5px;">GAME OVER</p>
+            </div>
+            <div style="font-size: 0.8em; color: #666; margin-top: 10px;">
+                <p>ESC to exit • Auto-close in 5 seconds</p>
+            </div>
+        `;
+        
+        // Auto-close after 5 seconds
+        setTimeout(() => {
+            if (this.gameContainer) {
+                this.destroy();
+            }
+        }, 5000);
+    }
+    
+    destroy() {
+        console.log('%c[TRON] Light Cycle Arena terminated.', 'color: #ff6600; font-family: monospace;');
+        
+        this.isRunning = false;
+        this.gameState = 'destroyed';
+        
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+        
+        if (this.keyHandler) {
+            document.removeEventListener('keydown', this.keyHandler);
+        }
+        
+        if (this.gameContainer) {
+            this.gameContainer.remove();
+        }
+        
+        // Restore body scrolling
+        document.body.style.overflow = '';
+    }
+}

@@ -18,7 +18,7 @@ class TronLightCycles {
                 x: Math.floor(this.gridSize * 0.25), 
                 y: Math.floor(this.gridSize * 0.5), 
                 dx: 1, dy: 0,
-                color: '#00ffff', 
+                color: '#8a2be2', 
                 name: 'PLAYER 1',
                 trail: [], 
                 alive: true,
@@ -28,7 +28,7 @@ class TronLightCycles {
                 x: Math.floor(this.gridSize * 0.75), 
                 y: Math.floor(this.gridSize * 0.5), 
                 dx: -1, dy: 0,
-                color: '#ff6600', 
+                color: '#ff1493', 
                 name: 'AI OPPONENT',
                 trail: [], 
                 alive: true,
@@ -67,14 +67,14 @@ class TronLightCycles {
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(circle at center, #001122 0%, #000000 100%);
+            background: radial-gradient(circle at center, #220122 0%, #110011 100%);
             z-index: 2000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-family: 'Orbitron', monospace;
-            color: #00ffff;
+            color: #8a2be2;
             overflow: hidden;
         `;
         
@@ -89,12 +89,12 @@ class TronLightCycles {
         this.canvas.width = this.gridSize;
         this.canvas.height = this.gridSize;
         this.canvas.style.cssText = `
-            border: 3px solid #00ffff;
+            border: 3px solid #8a2be2;
             box-shadow: 
-                0 0 50px #00ffff, 
-                inset 0 0 30px rgba(0, 255, 255, 0.1),
-                0 0 100px rgba(0, 255, 255, 0.3);
-            background: radial-gradient(circle at center, #000011 0%, #000000 100%);
+                0 0 50px #8a2be2, 
+                inset 0 0 30px rgba(138, 43, 226, 0.1),
+                0 0 100px rgba(138, 43, 226, 0.3);
+            background: radial-gradient(circle at center, #110011 0%, #000000 100%);
             image-rendering: pixelated;
         `;
         
@@ -107,7 +107,7 @@ class TronLightCycles {
             position: absolute;
             top: 20px;
             font-size: clamp(1.5rem, 4vw, 3rem);
-            text-shadow: 0 0 20px #00ffff;
+            text-shadow: 0 0 20px #8a2be2;
             animation: tronGlow 2s ease-in-out infinite alternate;
             margin: 0;
             z-index: 10;
@@ -120,7 +120,7 @@ class TronLightCycles {
             position: absolute;
             bottom: 20px;
             text-align: center;
-            color: #00ff41;
+            color: #ff1493;
             font-size: clamp(0.8rem, 2vw, 1.2rem);
             z-index: 10;
         `;
@@ -159,11 +159,11 @@ class TronLightCycles {
             style.textContent = `
                 @keyframes tronGlow {
                     from { 
-                        text-shadow: 0 0 20px #00ffff; 
+                        text-shadow: 0 0 20px #8a2be2; 
                         transform: scale(1);
                     }
                     to { 
-                        text-shadow: 0 0 40px #00ffff, 0 0 60px #00ffff; 
+                        text-shadow: 0 0 40px #8a2be2, 0 0 60px #8a2be2; 
                         transform: scale(1.02);
                     }
                 }
@@ -269,7 +269,7 @@ class TronLightCycles {
     }
     
     startGame() {
-        console.log('%c[TRON] Light Cycle Arena initialized! Use WASD to control your cycle.', 'color: #00ffff; font-family: monospace;');
+        console.log('%c[TRON] Light Cycle Arena initialized! Use WASD to control your cycle.', 'color: #8a2be2; font-family: monospace;');
         
         this.gameState = 'playing';
         this.isRunning = true;
@@ -277,7 +277,7 @@ class TronLightCycles {
         // Update status display
         const statusDiv = document.getElementById('gameStatus');
         statusDiv.innerHTML = `
-            <div style="color: #00ff41;">
+            <div style="color: #ff1493;">
                 <p>ARENA ACTIVE - SURVIVE THE GRID!</p>
             </div>
             <div style="font-size: 0.8em; color: #666;">
@@ -513,7 +513,7 @@ class TronLightCycles {
                 <div style="color: ${player1.color}; text-shadow: 0 0 10px ${player1.color};">
                     ${player1.name}: ${player1.alive ? 'ONLINE' : 'DEREZZED'}
                 </div>
-                <div style="color: #00ff41; font-size: 0.8em;">
+                <div style="color: #ff1493; font-size: 0.8em;">
                     ARENA TIME: ${Math.floor((Date.now() / 1000) % 999)}
                 </div>
                 <div style="color: ${player2.color}; text-shadow: 0 0 10px ${player2.color};">
@@ -531,7 +531,7 @@ class TronLightCycles {
             
             if (aliveCycles.length === 1) {
                 this.winner = aliveCycles[0];
-                console.log(`%c[TRON] ${this.winner.name} wins the Light Cycle Arena!`, 'color: #00ff41; font-family: monospace;');
+                console.log(`%c[TRON] ${this.winner.name} wins the Light Cycle Arena!`, 'color: #ff1493; font-family: monospace;');
             } else {
                 console.log('%c[TRON] Draw! All cycles derezzed simultaneously!', 'color: #ffff00; font-family: monospace;');
             }

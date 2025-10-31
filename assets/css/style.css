@@ -350,20 +350,20 @@ body {
 .cyber-button:hover {
     transform: translateY(-2px);
     box-shadow: 
-        0 5px 15px rgba(0, 255, 255, 0.3),
-        inset 0 0 20px rgba(0, 255, 255, 0.1);
+        0 5px 15px rgba(138, 43, 226, 0.3),
+        inset 0 0 20px rgba(138, 43, 226, 0.1);
 }
 
 .cyber-button.primary:hover {
     color: var(--dark-bg);
-    background: var(--primary-cyan);
+    background: var(--primary-purple);
     text-shadow: none;
 }
 
 .cyber-button.secondary:hover {
     color: var(--dark-bg);
-    background: var(--neon-green);
-    border-color: var(--neon-green);
+    background: var(--neon-pink);
+    border-color: var(--neon-pink);
 }
 
 .button-glow {
@@ -385,7 +385,7 @@ body {
     position: fixed;
     width: 100px;
     height: 100px;
-    border: 2px solid var(--primary-cyan);
+    border: 2px solid var(--primary-purple);
     z-index: 5;
 }
 
@@ -395,7 +395,7 @@ body {
     position: absolute;
     width: 20px;
     height: 20px;
-    border: 2px solid var(--primary-cyan);
+    border: 2px solid var(--primary-purple);
 }
 
 .top-left {
@@ -446,7 +446,7 @@ body {
     top: 0;
     width: 2px;
     height: 100%;
-    background: linear-gradient(to bottom, transparent, var(--primary-cyan), transparent);
+    background: linear-gradient(to bottom, transparent, var(--primary-purple), transparent);
     animation: dataFlow 3s linear infinite;
     z-index: 1;
 }
@@ -508,19 +508,19 @@ body {
     max-width: 1000px;
     height: 80%;
     background: var(--darker-bg);
-    border: 2px solid var(--primary-cyan);
+    border: 2px solid var(--primary-purple);
     border-radius: 8px;
     box-shadow: 
-        0 0 30px rgba(0, 255, 255, 0.3),
-        inset 0 0 20px rgba(0, 255, 255, 0.1);
+        0 0 30px rgba(138, 43, 226, 0.3),
+        inset 0 0 20px rgba(138, 43, 226, 0.1);
     display: flex;
     flex-direction: column;
     font-family: 'Courier New', monospace;
 }
 
 .terminal-header {
-    background: linear-gradient(135deg, #001122, #002244);
-    border-bottom: 1px solid var(--primary-cyan);
+    background: linear-gradient(135deg, #220122, #440244);
+    border-bottom: 1px solid var(--primary-purple);
     padding: 0.5rem 1rem;
     display: flex;
     align-items: center;
@@ -559,7 +559,7 @@ body {
 }
 
 .terminal-title {
-    color: var(--primary-cyan);
+    color: var(--primary-purple);
     font-size: 0.9rem;
     font-weight: 600;
 }
@@ -582,7 +582,7 @@ body {
     flex: 1;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: var(--primary-cyan) transparent;
+    scrollbar-color: var(--primary-purple) transparent;
     margin-bottom: 1rem;
 }
 
@@ -595,12 +595,12 @@ body {
 }
 
 .terminal-output::-webkit-scrollbar-thumb {
-    background: var(--primary-cyan);
+    background: var(--primary-purple);
     border-radius: 3px;
 }
 
 .boot-sequence {
-    color: var(--neon-green);
+    color: var(--neon-pink);
     margin-bottom: 1rem;
 }
 
@@ -629,7 +629,7 @@ body {
 }
 
 .terminal-prompt {
-    color: var(--neon-green);
+    color: var(--neon-pink);
     font-weight: 600;
     white-space: nowrap;
 }
@@ -646,7 +646,7 @@ body {
 }
 
 .terminal-cursor {
-    color: var(--primary-cyan);
+    color: var(--primary-purple);
     animation: cursorBlink 1s infinite;
     position: absolute;
     right: -10px;

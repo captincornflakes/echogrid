@@ -455,6 +455,223 @@ body {
     }
 }
 
+/* Terminal Emulator */
+.terminal-emulator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: terminalFadeIn 0.3s ease-out;
+}
+
+.terminal-emulator.active {
+    display: flex;
+}
+
+@keyframes terminalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.terminal-window {
+    width: 90%;
+    max-width: 1000px;
+    height: 80%;
+    background: var(--darker-bg);
+    border: 2px solid var(--primary-cyan);
+    border-radius: 8px;
+    box-shadow: 
+        0 0 30px rgba(0, 255, 255, 0.3),
+        inset 0 0 20px rgba(0, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Courier New', monospace;
+}
+
+.terminal-header {
+    background: linear-gradient(135deg, #001122, #002244);
+    border-bottom: 1px solid var(--primary-cyan);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 6px 6px 0 0;
+}
+
+.terminal-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.control-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.control-button.close {
+    background: #ff5f57;
+}
+
+.control-button.minimize {
+    background: #ffbd2e;
+}
+
+.control-button.maximize {
+    background: #28ca42;
+}
+
+.control-button:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px currentColor;
+}
+
+.terminal-title {
+    color: var(--primary-cyan);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.terminal-info {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.terminal-body {
+    flex: 1;
+    padding: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--dark-bg);
+}
+
+.terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-cyan) transparent;
+    margin-bottom: 1rem;
+}
+
+.terminal-output::-webkit-scrollbar {
+    width: 6px;
+}
+
+.terminal-output::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.terminal-output::-webkit-scrollbar-thumb {
+    background: var(--primary-cyan);
+    border-radius: 3px;
+}
+
+.boot-sequence {
+    color: var(--neon-green);
+    margin-bottom: 1rem;
+}
+
+.boot-line {
+    margin-bottom: 0.3rem;
+    animation: typewriter 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.boot-line:nth-child(1) { animation-delay: 0.2s; }
+.boot-line:nth-child(2) { animation-delay: 0.7s; }
+.boot-line:nth-child(3) { animation-delay: 1.2s; }
+.boot-line:nth-child(4) { animation-delay: 1.7s; }
+
+@keyframes typewriter {
+    to {
+        opacity: 1;
+    }
+}
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+    position: relative;
+}
+
+.terminal-prompt {
+    color: var(--neon-green);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.terminal-input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    outline: none;
+    flex: 1;
+    margin-left: 0.5rem;
+}
+
+.terminal-cursor {
+    color: var(--primary-cyan);
+    animation: cursorBlink 1s infinite;
+    position: absolute;
+    right: -10px;
+}
+
+@keyframes cursorBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.output-line {
+    margin-bottom: 0.3rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.output-line.command {
+    color: var(--text-primary);
+}
+
+.output-line.result {
+    color: var(--text-secondary);
+}
+
+.output-line.error {
+    color: var(--warning-orange);
+}
+
+.output-line.success {
+    color: var(--neon-green);
+}
+
+.cyber-button.terminal {
+    border-color: var(--warning-orange);
+    color: var(--warning-orange);
+}
+
+.cyber-button.terminal:hover {
+    background: var(--warning-orange);
+    color: var(--dark-bg);
+}
+
 /* Terminal Footer */
 .terminal-footer {
     position: fixed;

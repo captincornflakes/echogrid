@@ -69,11 +69,11 @@
                     <!-- Action Panel -->
                     <div class="action-panel">
                         <button class="cyber-button primary">
-                            <span class="button-text">ENTER GRID</span>
+                            <span class="button-text">INITIALIZE</span>
                             <span class="button-glow"></span>
                         </button>
-                        <button class="cyber-button secondary">
-                            <span class="button-text">INITIALIZE</span>
+                        <button class="cyber-button terminal" id="openTerminal">
+                            <span class="button-text">TERMINAL</span>
                             <span class="button-glow"></span>
                         </button>
                     </div>
@@ -91,6 +91,36 @@
         <div class="data-stream left"></div>
         <div class="data-stream right"></div>
     </main>
+
+    <!-- Terminal Emulator -->
+    <div class="terminal-emulator" id="terminalEmulator">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-controls">
+                    <div class="control-button close" id="closeTerminal"></div>
+                    <div class="control-button minimize"></div>
+                    <div class="control-button maximize"></div>
+                </div>
+                <div class="terminal-title">EchoGrid Terminal v2.1.0</div>
+                <div class="terminal-info">user@echogrid:~</div>
+            </div>
+            <div class="terminal-body" id="terminalBody">
+                <div class="terminal-output" id="terminalOutput">
+                    <div class="boot-sequence">
+                        <div class="boot-line">EchoGrid Linux 5.15.0-echogrid #1 SMP</div>
+                        <div class="boot-line">Welcome to EchoGrid Terminal</div>
+                        <div class="boot-line">Type 'help' for available commands</div>
+                        <div class="boot-line">&nbsp;</div>
+                    </div>
+                </div>
+                <div class="terminal-input-line">
+                    <span class="terminal-prompt">user@echogrid:~$ </span>
+                    <input type="text" class="terminal-input" id="terminalInput" autocomplete="off" spellcheck="false">
+                    <span class="terminal-cursor">_</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Terminal Footer -->
     <footer class="terminal-footer">

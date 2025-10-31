@@ -3,73 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="EchoGrid - Your Digital Hub">
-    <title>EchoGrid</title>
+    <meta name="description" content="EchoGrid - Enter the Digital Matrix">
+    <title>EchoGrid | Digital Matrix</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <h1>EchoGrid</h1>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Grid Background -->
+    <div class="grid-background"></div>
+    
+    <!-- Scanlines Effect -->
+    <div class="scanlines"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
 
-    <main>
-        <section id="home" class="hero">
-            <div class="hero-content">
-                <h2>Welcome to EchoGrid</h2>
-                <p>Your digital hub for innovative solutions</p>
-                <button class="cta-button">Get Started</button>
-            </div>
-        </section> 
- 
-        <section id="about" class="about">
-            <div class="container">
-                <h2>About Us</h2>
-                <p>EchoGrid is dedicated to providing cutting-edge digital solutions that empower businesses and individuals to thrive in the modern world.</p>
-            </div>
-        </section>
-
-        <section id="services" class="services">
-            <div class="container">
-                <h2>Our Services</h2>
-                <div class="service-grid">
-                    <div class="service-item">
-                        <h3>Web Development</h3>
-                        <p>Custom websites and web applications</p>
+    <main class="matrix-container">
+        <!-- Central Welcome Interface -->
+        <div class="welcome-interface">
+            <div class="interface-border">
+                <div class="interface-content">
+                    <!-- Logo/Title -->
+                    <div class="logo-container">
+                        <h1 class="cyber-title">
+                            <span class="title-echo">ECHO</span><span class="title-grid">GRID</span>
+                        </h1>
+                        <div class="title-underline"></div>
                     </div>
-                    <div class="service-item">
-                        <h3>Digital Marketing</h3>
-                        <p>Boost your online presence</p>
+                    
+                    <!-- Status Display -->
+                    <div class="status-display">
+                        <div class="status-line">
+                            <span class="status-label">SYSTEM:</span>
+                            <span class="status-value typing">ONLINE</span>
+                        </div>
+                        <div class="status-line">
+                            <span class="status-label">GRID:</span>
+                            <span class="status-value typing">CONNECTED</span>
+                        </div>
+                        <div class="status-line">
+                            <span class="status-label">ACCESS:</span>
+                            <span class="status-value typing">AUTHORIZED</span>
+                        </div>
                     </div>
-                    <div class="service-item">
-                        <h3>Consulting</h3>
-                        <p>Strategic digital transformation</p>
+                    
+                    <!-- Welcome Message -->
+                    <div class="welcome-message">
+                        <p class="cyber-text">
+                            Welcome to the <span class="highlight">Digital Matrix</span><br>
+                            Your gateway to the cyber realm awaits
+                        </p>
+                    </div>
+                    
+                    <!-- Action Panel -->
+                    <div class="action-panel">
+                        <button class="cyber-button primary">
+                            <span class="button-text">ENTER GRID</span>
+                            <span class="button-glow"></span>
+                        </button>
+                        <button class="cyber-button secondary">
+                            <span class="button-text">INITIALIZE</span>
+                            <span class="button-glow"></span>
+                        </button>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <section id="contact" class="contact">
-            <div class="container">
-                <h2>Contact Us</h2>
-                <p>Ready to get started? Reach out to us today!</p>
-                <button class="contact-button">Contact Now</button>
-            </div>
-        </section>
+        </div>
+        
+        <!-- Corner Decorations -->
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration bottom-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+        
+        <!-- Data Streams -->
+        <div class="data-stream left"></div>
+        <div class="data-stream right"></div>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 EchoGrid. All rights reserved.</p>
+    <!-- Terminal Footer -->
+    <footer class="terminal-footer">
+        <div class="terminal-line">
+            <span class="prompt">[ECHOGRID]$</span>
+            <span class="command typing">echo "Welcome to the future" | grep -i "digital"</span>
+        </div>
+        <div class="copyright">
+            <span>&copy; 2025 EchoGrid Industries | All Rights Reserved</span>
         </div>
     </footer>
 

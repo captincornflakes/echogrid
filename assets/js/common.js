@@ -1,183 +1,367 @@
-// Common JavaScript functionality for EchoGrid website
+// EchoGrid Cyberpunk Interface System
 
-// Wait for DOM to be fully loaded
+// System initialization
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('EchoGrid website loaded successfully!');
+    console.log('%c[ECHOGRID] System initializing...', 'color: #00ffff; font-family: monospace;');
     
-    // Initialize all functionality
-    initNavigation();
-    initButtons();
-    initScrollEffects();
+    // Initialize cyber systems
+    initCyberInterface();
+    initMatrixEffects();
+    initTerminalEffects();
+    initSystemSounds();
+    
+    // Boot sequence
+    setTimeout(() => {
+        console.log('%c[ECHOGRID] All systems online. Welcome to the Grid.', 'color: #00ff41; font-family: monospace;');
+    }, 2000);
 });
 
-// Navigation functionality
-function initNavigation() {
-    const navLinks = document.querySelectorAll('.nav-links a');
+// Cyber Interface initialization
+function initCyberInterface() {
+    const buttons = document.querySelectorAll('.cyber-button');
     
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+    buttons.forEach(button => {
+        // Add hover sound effect placeholder
+        button.addEventListener('mouseenter', function() {
+            // Placeholder for hover sound
+            console.log('[AUDIO] Interface hover detected');
+        });
+        
+        // Button click handlers
+        button.addEventListener('click', function(e) {
             e.preventDefault();
             
-            const targetId = this.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
+            const buttonText = this.querySelector('.button-text').textContent;
             
-            if (targetSection) {
-                // Smooth scroll to section
-                targetSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                
-                // Update active navigation
-                updateActiveNav(this);
+            if (buttonText === 'ENTER GRID') {
+                initGridEntry();
+            } else if (buttonText === 'INITIALIZE') {
+                initSystemCheck();
             }
+            
+            // Add click effect
+            addClickEffect(this);
         });
     });
 }
 
-// Update active navigation link
-function updateActiveNav(activeLink) {
-    const navLinks = document.querySelectorAll('.nav-links a');
+// Grid entry sequence
+function initGridEntry() {
+    console.log('%c[SYSTEM] Initiating grid entry protocol...', 'color: #00ffff; font-family: monospace;');
     
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-    });
+    // Create matrix rain effect
+    createMatrixRain();
     
-    activeLink.classList.add('active');
-}
-
-// Button functionality
-function initButtons() {
-    const ctaButton = document.querySelector('.cta-button');
-    const contactButton = document.querySelector('.contact-button');
+    // Simulate loading
+    const loadingMessages = [
+        'Establishing connection...',
+        'Authenticating credentials...',
+        'Loading neural interface...',
+        'Grid access granted.'
+    ];
     
-    if (ctaButton) {
-        ctaButton.addEventListener('click', function() {
-            // Scroll to services section
-            const servicesSection = document.getElementById('services');
-            if (servicesSection) {
-                servicesSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    }
-    
-    if (contactButton) {
-        contactButton.addEventListener('click', function() {
-            showContactModal();
-        });
-    }
-}
-
-// Contact modal functionality
-function showContactModal() {
-    // Simple alert for now - can be replaced with a proper modal
-    alert('Thank you for your interest! Contact form coming soon.\n\nFor now, please reach out to us at:\ninfo@echogrid.win');
-}
-
-// Scroll effects
-function initScrollEffects() {
-    // Add scroll listener for header shadow
-    window.addEventListener('scroll', function() {
-        const header = document.querySelector('header');
+    let messageIndex = 0;
+    const interval = setInterval(() => {
+        console.log(`%c[GRID] ${loadingMessages[messageIndex]}`, 'color: #00ff41; font-family: monospace;');
+        messageIndex++;
         
-        if (window.scrollY > 100) {
-            header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
-        } else {
-            header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        if (messageIndex >= loadingMessages.length) {
+            clearInterval(interval);
+            showWelcomeMessage();
         }
-    });
+    }, 1500);
+}
+
+// System initialization check
+function initSystemCheck() {
+    console.log('%c[SYSTEM] Running diagnostic protocols...', 'color: #ff6600; font-family: monospace;');
     
-    // Intersection Observer for animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+    const systems = [
+        { name: 'Neural Network', status: 'ONLINE' },
+        { name: 'Quantum Processors', status: 'OPTIMAL' },
+        { name: 'Security Protocols', status: 'ACTIVE' },
+        { name: 'Data Streams', status: 'FLOWING' }
+    ];
     
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-    
-    // Observe service items for animation
-    const serviceItems = document.querySelectorAll('.service-item');
-    serviceItems.forEach(item => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(30px)';
-        item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(item);
+    systems.forEach((system, index) => {
+        setTimeout(() => {
+            console.log(`%c[CHECK] ${system.name}: ${system.status}`, 'color: #00ff41; font-family: monospace;');
+        }, (index + 1) * 800);
     });
 }
 
-// Utility functions
-const Utils = {
-    // Debounce function for performance
-    debounce: function(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
+// Matrix visual effects
+function initMatrixEffects() {
+    // Add glitch effect to title
+    const title = document.querySelector('.cyber-title');
+    if (title) {
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                title.style.textShadow = '2px 0 #ff0000, -2px 0 #00ffff';
+                setTimeout(() => {
+                    title.style.textShadow = '';
+                }, 100);
+            }
+        }, 100);
+    }
+    
+    // Animate status values
+    animateStatusValues();
+}
+
+// Animate status display values
+function animateStatusValues() {
+    const statusValues = document.querySelectorAll('.status-value');
+    
+    statusValues.forEach((value, index) => {
+        setTimeout(() => {
+            const originalText = value.textContent;
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let iterations = 0;
+            
+            const interval = setInterval(() => {
+                value.textContent = originalText
+                    .split('')
+                    .map((char, charIndex) => {
+                        if (charIndex < iterations) {
+                            return originalText[charIndex];
+                        }
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    })
+                    .join('');
+                
+                if (iterations >= originalText.length) {
+                    clearInterval(interval);
+                    value.textContent = originalText;
+                }
+                
+                iterations += 1/3;
+            }, 30);
+        }, index * 500);
+    });
+}
+
+// Terminal effects
+function initTerminalEffects() {
+    const commands = [
+        'system.initialize()',
+        'grid.connect()',
+        'neural.link.establish()',
+        'security.protocols.active()',
+        'welcome.user()'
+    ];
+    
+    let commandIndex = 0;
+    const terminalCommand = document.querySelector('.command');
+    
+    if (terminalCommand) {
+        setInterval(() => {
+            terminalCommand.textContent = commands[commandIndex];
+            commandIndex = (commandIndex + 1) % commands.length;
+        }, 3000);
+    }
+}
+
+// Click effect animation
+function addClickEffect(element) {
+    element.style.transform = 'scale(0.95)';
+    element.style.filter = 'brightness(1.5)';
+    
+    setTimeout(() => {
+        element.style.transform = '';
+        element.style.filter = '';
+    }, 150);
+}
+
+// Matrix rain effect
+function createMatrixRain() {
+    const canvas = document.createElement('canvas');
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '-1';
+    canvas.style.opacity = '0.1';
+    
+    document.body.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const charArray = chars.split('');
+    
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+    
+    function drawMatrix() {
+        ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#00ffff';
+        ctx.font = `${fontSize}px monospace`;
+        
+        for (let i = 0; i < drops.length; i++) {
+            const text = charArray[Math.floor(Math.random() * charArray.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+    
+    const matrixInterval = setInterval(drawMatrix, 35);
+    
+    // Remove after 10 seconds
+    setTimeout(() => {
+        clearInterval(matrixInterval);
+        document.body.removeChild(canvas);
+    }, 10000);
+}
+
+// Welcome message system
+function showWelcomeMessage() {
+    const messages = [
+        'Grid connection established.',
+        'Neural interface synchronized.',
+        'Welcome to EchoGrid, User.',
+        'The digital realm awaits your command.'
+    ];
+    
+    messages.forEach((message, index) => {
+        setTimeout(() => {
+            console.log(`%c[WELCOME] ${message}`, 'color: #00ff41; font-family: monospace; font-size: 14px;');
+        }, index * 1000);
+    });
+}
+
+// System sounds (placeholder for future audio implementation)
+function initSystemSounds() {
+    // Placeholder for Web Audio API implementation
+    console.log('%c[AUDIO] Sound system initialized (silent mode)', 'color: #666; font-family: monospace;');
+}
+
+// Cyber utilities
+const CyberUtils = {
+    // Generate random cyber text
+    generateCyberText: function(length = 10) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        return Array.from({length}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    },
+    
+    // Glitch text effect
+    glitchText: function(element, duration = 1000) {
+        const originalText = element.textContent;
+        const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+        
+        const glitchInterval = setInterval(() => {
+            element.textContent = originalText
+                .split('')
+                .map(char => Math.random() > 0.8 ? chars[Math.floor(Math.random() * chars.length)] : char)
+                .join('');
+        }, 50);
+        
+        setTimeout(() => {
+            clearInterval(glitchInterval);
+            element.textContent = originalText;
+        }, duration);
+    },
+    
+    // Create particle effect
+    createParticleEffect: function(x, y) {
+        const particle = document.createElement('div');
+        particle.style.position = 'fixed';
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.width = '4px';
+        particle.style.height = '4px';
+        particle.style.background = '#00ffff';
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.boxShadow = '0 0 10px #00ffff';
+        particle.style.zIndex = '1000';
+        
+        document.body.appendChild(particle);
+        
+        // Animate particle
+        particle.animate([
+            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: `translate(${(Math.random() - 0.5) * 200}px, ${(Math.random() - 0.5) * 200}px) scale(0)`, opacity: 0 }
+        ], {
+            duration: 1000,
+            easing: 'ease-out'
+        }).onfinish = () => {
+            document.body.removeChild(particle);
         };
-    },
-    
-    // Check if element is in viewport
-    isInViewport: function(element) {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-    },
-    
-    // Simple form validation
-    validateEmail: function(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
     }
 };
 
-// Export for potential module use
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        Utils,
-        initNavigation,
-        initButtons,
-        initScrollEffects
-    };
-}
-
-// Add some interactive features
+// Enhanced interaction system
 document.addEventListener('DOMContentLoaded', function() {
-    // Add hover effects to service items
-    const serviceItems = document.querySelectorAll('.service-item');
-    
-    serviceItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px) scale(1.02)';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-    
-    // Add click tracking for analytics (placeholder)
+    // Add particle effects on click
     document.addEventListener('click', function(e) {
-        if (e.target.matches('button, a')) {
-            console.log('User clicked:', e.target.textContent || e.target.href);
-            // Here you could send analytics data to your tracking service
+        CyberUtils.createParticleEffect(e.clientX, e.clientY);
+        
+        // Console logging with cyber style
+        if (e.target.matches('button')) {
+            console.log(`%c[USER_INPUT] Button activated: ${e.target.textContent}`, 'color: #ff6600; font-family: monospace;');
         }
     });
+    
+    // Konami code easter egg
+    let konamiCode = [];
+    const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // Up, Up, Down, Down, Left, Right, Left, Right, B, A
+    
+    document.addEventListener('keydown', function(e) {
+        konamiCode.push(e.keyCode);
+        
+        if (konamiCode.length > konamiSequence.length) {
+            konamiCode.shift();
+        }
+        
+        if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+            console.log('%c[EASTER_EGG] Konami Code Detected! Activating enhanced cyber mode...', 'color: #ff00ff; font-family: monospace; font-size: 16px;');
+            document.body.style.animation = 'cyberPulse 2s infinite';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 10000);
+        }
+    });
+    
+    // Window resize handler for responsive effects
+    window.addEventListener('resize', function() {
+        // Regenerate particles if needed
+        console.log('%c[SYSTEM] Interface adapted to new dimensions', 'color: #00ffff; font-family: monospace;');
+    });
 });
+
+// Export cyber utilities
+if (typeof window !== 'undefined') {
+    window.CyberUtils = CyberUtils;
+}
+
+// Add CSS animation for easter egg
+const style = document.createElement('style');
+style.textContent = `
+@keyframes cyberPulse {
+    0%, 100% { 
+        filter: hue-rotate(0deg) brightness(1); 
+    }
+    25% { 
+        filter: hue-rotate(90deg) brightness(1.2); 
+    }
+    50% { 
+        filter: hue-rotate(180deg) brightness(1.5); 
+    }
+    75% { 
+        filter: hue-rotate(270deg) brightness(1.2); 
+    }
+}
+`;
+document.head.appendChild(style);

@@ -42,6 +42,19 @@
                         <div class="title-underline"></div>
                     </div>
                     
+                    <!-- Minecraft Server Banner -->
+                    <div class="minecraft-banner">
+                        <div class="minecraft-header">
+                            <span class="minecraft-icon">⛏️</span>
+                            <span class="minecraft-title">MINECRAFT SERVER</span>
+                        </div>
+                        <div class="server-address" id="serverAddress" onclick="copyServerAddress()">
+                            <span class="address-text">mc.echogrid.win</span>
+                            <span class="copy-icon">📋</span>
+                        </div>
+                        <div class="copy-feedback" id="copyFeedback">Copied to clipboard!</div>
+                    </div>
+                    
                     <!-- Status Display -->
                     <div class="status-display">
                         <div class="status-line">
@@ -136,5 +149,40 @@
     <script src="assets/js/common.js"></script>
     <script src="assets/js/terminal.js"></script>
     <script src="assets/js/tron.js"></script>
+    
+    <script>
+        // Minecraft server address copy functionality
+        function copyServerAddress() {
+            const serverAddress = 'mc.echogrid.win';
+            const feedback = document.getElementById('copyFeedback');
+            
+            navigator.clipboard.writeText(serverAddress).then(function() {
+                feedback.style.opacity = '1';
+                feedback.style.transform = 'translateY(-10px)';
+                
+                setTimeout(function() {
+                    feedback.style.opacity = '0';
+                    feedback.style.transform = 'translateY(0)';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = serverAddress;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                feedback.style.opacity = '1';
+                feedback.style.transform = 'translateY(-10px)';
+                
+                setTimeout(function() {
+                    feedback.style.opacity = '0';
+                    feedback.style.transform = 'translateY(0)';
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>

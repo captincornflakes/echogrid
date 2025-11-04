@@ -13,8 +13,8 @@
     --electric-blue: #0080ff;
     --cyber-purple: #8a2be2;
     --matrix-green: #00ff00;
-    --warning-orange: #ff6b35;
-    --danger-red: #ff073a;
+    --warning-orange: #00ccff; /* Changed from orange to cyan variant */
+    --danger-red: #ff073a; /* Keep but don't use in animations */
     
     /* Glass and Background */
     --glass-bg: rgba(0, 20, 40, 0.1);
@@ -306,11 +306,11 @@ body {
 @keyframes titleGlow {
     0% {
         background-position: 0% 50%;
-        filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
+        filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
     }
     100% {
         background-position: 100% 50%;
-        filter: drop-shadow(0 0 30px rgba(0, 255, 65, 0.7));
+        filter: drop-shadow(0 0 30px rgba(0, 255, 65, 0.8));
     }
 }
 
@@ -573,17 +573,17 @@ body {
 }
 
 .cyber-button.terminal {
-    border-color: rgba(255, 107, 53, 0.3);
-    color: var(--warning-orange);
+    border-color: rgba(0, 204, 255, 0.3); /* Changed from orange to cyan */
+    color: #00ccff; /* Changed from orange to cyan */
 }
 
 .cyber-button.terminal:hover {
-    background: rgba(255, 107, 53, 0.1);
-    border-color: var(--warning-orange);
+    background: rgba(0, 204, 255, 0.1); /* Changed from orange to cyan */
+    border-color: #00ccff; /* Changed from orange to cyan */
     box-shadow: 
-        0 15px 40px rgba(255, 107, 53, 0.3),
+        0 15px 40px rgba(0, 204, 255, 0.3), /* Changed from orange to cyan */
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    text-shadow: 0 0 20px var(--warning-orange);
+    text-shadow: 0 0 20px #00ccff; /* Changed from orange to cyan */
 }
 
 .button-glow {
@@ -770,20 +770,24 @@ body {
 }
 
 .control-button.close {
-    background: linear-gradient(135deg, #ff073a, #ff5f57);
+    background: linear-gradient(135deg, var(--primary-cyan), var(--electric-blue));
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .control-button.minimize {
-    background: linear-gradient(135deg, #ff6b35, #ffbd2e);
+    background: linear-gradient(135deg, var(--neon-green), var(--matrix-green));
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
 }
 
 .control-button.maximize {
-    background: linear-gradient(135deg, #00ff41, #28ca42);
+    background: linear-gradient(135deg, var(--electric-blue), var(--cyber-purple));
+    box-shadow: 0 0 10px rgba(0, 128, 255, 0.5);
 }
 
 .control-button:hover {
-    transform: scale(1.2);
-    box-shadow: 0 0 15px currentColor;
+    transform: scale(1.1);
+    filter: brightness(1.3);
+    box-shadow: 0 0 20px currentColor;
 }
 
 .terminal-title {
@@ -1012,10 +1016,10 @@ body {
 
 @keyframes cyberGlow {
     from {
-        filter: drop-shadow(0 0 5px currentColor);
+        filter: drop-shadow(0 0 8px currentColor);
     }
     to {
-        filter: drop-shadow(0 0 20px currentColor);
+        filter: drop-shadow(0 0 25px currentColor);
     }
 }
 

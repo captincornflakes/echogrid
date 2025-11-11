@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoGrid Minecraft Server</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ff41;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: rgba(0, 255, 65, 0.1);
+            border-bottom: 2px solid #00ff41;
+            padding: 10px 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 255, 65, 0.3);
+        }
+        
+        .header h1 {
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header .url-info {
+            color: #00ccff;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .iframe-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .iframe-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ff41;
+            font-size: 18px;
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .loading::after {
+            content: '';
+            animation: dots 2s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        .controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 255, 65, 0.4);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+        
+        .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            color: #ff4444;
+            padding: 20px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            display: none;
+            z-index: 20;
+        }
+        
+        /* Cyberpunk glow effects */
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+            opacity: 0.1;
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 EchoGrid Minecraft Server</h1>
+            <div class="url-info">mc.echogrid.win:10067</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="refreshFrame()">🔄 Refresh</button>
+            <button class="btn" onclick="openInNewTab()">🔗 Open in New Tab</button>
+            <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+        </div>
+        
+        <div class="iframe-container">
+            <div class="loading" id="loading">Loading EchoGrid Server</div>
+            
+            <div class="error-message" id="error">
+                <h3>⚠️ Connection Error</h3>
+                <p>Unable to load the EchoGrid server interface.</p>
+                <p>This could be due to:</p>
+                <ul style="text-align: left; margin-top: 10px;">
+                    <li>Server is temporarily down</li>
+                    <li>Network connectivity issues</li>
+                    <li>CORS restrictions</li>
+                </ul>
+                <button class="btn" onclick="refreshFrame()" style="margin-top: 15px;">Try Again</button>
+            </div>
+            
+            <iframe 
+                id="gameFrame"
+                class="iframe-frame" 
+                src="http://mc.echogrid.win:10067/"
+                onload="onFrameLoad()"
+                onerror="onFrameError()"
+                title="EchoGrid Minecraft Server">
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+        let frameLoaded = false;
+        let loadingTimeout;
+
+        function onFrameLoad() {
+            console.log('Frame loaded successfully');
+            frameLoaded = true;
+            hideLoading();
+        }
+
+        function onFrameError() {
+            console.log('Frame failed to load');
+            showError();
+        }
+
+        function hideLoading() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            
+            if (loading) loading.style.display = 'none';
+            if (error) error.style.display = 'none';
+        }
+
+        function showError() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            
+            if (loading) loading.style.display = 'none';
+            if (error) error.style.display = 'block';
+        }
+
+        function refreshFrame() {
+            const frame = document.getElementById('gameFrame');
+            const loading = document.getElementById('loading');
+            
+            frameLoaded = false;
+            if (loading) loading.style.display = 'block';
+            hideError();
+            
+            // Force reload the iframe
+            frame.src = frame.src;
+            
+            // Set a timeout to show error if loading takes too long
+            clearTimeout(loadingTimeout);
+            loadingTimeout = setTimeout(() => {
+                if (!frameLoaded) {
+                    showError();
+                }
+            }, 10000); // 10 seconds timeout
+        }
+
+        function hideError() {
+            const error = document.getElementById('error');
+            if (error) error.style.display = 'none';
+        }
+
+        function openInNewTab() {
+            window.open('http://mc.echogrid.win:10067/', '_blank');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Set initial timeout for loading
+        loadingTimeout = setTimeout(() => {
+            if (!frameLoaded) {
+                showError();
+            }
+        }, 10000);
+
+        // Handle fullscreen changes
+        document.addEventListener('fullscreenchange', () => {
+            const controls = document.querySelector('.controls');
+            if (document.fullscreenElement) {
+                controls.style.top = '20px';
+            } else {
+                controls.style.top = '10px';
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+                e.preventDefault();
+                refreshFrame();
+            }
+            if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
+
+        // Console logging for debugging
+        console.log('EchoGrid Minecraft Server Interface Loaded');
+        console.log('Target URL: http://mc.echogrid.win:10067/');
+    </script>
+</body>
+</html>

@@ -47,17 +47,19 @@ class VisitorTracker {
                 body: JSON.stringify(data)
             });
             
-            const result = await response.json();
-            
-            if (result.success) {
-                this.tracked = true;
-                console.log('✅ Visitor tracked successfully');
-            } else {
-                console.log('ℹ️ Visitor tracking skipped:', result.message);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            
-        } catch (error) {
+
             console.error('❌ Visitor tracking failed:', error);
+            
+            // Provide more specific error information for CORS issues
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.error('🔒 CORS Error: Cross-origin request blocked');
+                console.error('📍 API Endpoint:', this.apiEndpoint);
+                console.error('🌐 Current Origin:', window.location.origin);
+                console.error('💡 Check that the API server has proper CORS headers');
+            }
         }
     }
     
@@ -105,12 +107,24 @@ class VisitorTracker {
                 cache: 'no-cache',
                 body: JSON.stringify(data)
             });
-            
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
             const result = await response.json();
             return result.success;
             
         } catch (error) {
             console.error('Event tracking failed:', error);
+            
+            // Provide specific error information for CORS issues
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.error('🔒 CORS Error: Cross-origin request blocked for event tracking');
+                console.error('📍 API Endpoint:', this.apiEndpoint);
+                console.error('🌐 Current Origin:', window.location.origin);
+            }
+            
             return false;
         }
     }

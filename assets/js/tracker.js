@@ -42,6 +42,11 @@ class VisitorTracker {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+            const response = await fetch(this.apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 mode: 'cors',
                 credentials: 'omit',
                 body: JSON.stringify(data)
@@ -51,6 +56,16 @@ class VisitorTracker {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
+            const result = await response.json();
+            
+            if (result.success) {
+                this.tracked = true;
+                console.log('✅ Visitor tracked successfully');
+            } else {
+                console.log('ℹ️ Visitor tracking skipped:', result.message);
+            }
+            
+        } catch (error) {
             console.error('❌ Visitor tracking failed:', error);
             
             // Provide more specific error information for CORS issues

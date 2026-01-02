@@ -42,11 +42,6 @@ class VisitorTracker {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-            const response = await fetch(this.apiEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 mode: 'cors',
                 credentials: 'omit',
                 body: JSON.stringify(data)

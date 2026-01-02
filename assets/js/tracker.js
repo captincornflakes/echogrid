@@ -97,9 +97,12 @@ class VisitorTracker {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 mode: 'cors',
                 credentials: 'omit',
+                cache: 'no-cache',
                 body: JSON.stringify(data)
             });
             

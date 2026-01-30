@@ -153,7 +153,6 @@ access.log
 
 # Analytics and tracking
 google*.html
-.well-known/
 
 # CDN and asset optimization
 *.optimized.*
